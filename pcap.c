@@ -45,7 +45,6 @@ int main(int argc, char *argv[])
 	//packet = pcap_next(handle, &header);
 	while(1)
 	{
-	int offset=0;
 	res = pcap_next_ex(handle, &header, &packet);
 	if(res==0) continue;
 	/* Print its length */
@@ -53,8 +52,17 @@ int main(int argc, char *argv[])
 	printf("s.mac %02x:%02x:%02x:%02x:%02x:%02x\n",packet[0],packet[1],packet[2],packet[3],packet[4],packet[5]);
 	packet+=6;
 	printf("d.mac %02x:%02x:%02x:%02x:%02x:%02x\n",packet[0],packet[1],packet[2],packet[3],packet[4],packet[5]);
-	while(!((int)(packet[0])==69&&(int)(packet[1])==0)) packet++;
+	while(!(packet[0]==8&&packet[1]==0)) packet++;
+	packet+=14;
 	printf("s.ip %d.%d.%d.%d\n",packet[0],packet[1],packet[2],packet[3]);
+	packet+=4;
+	printf("d.ip %d.%d.%d.%d\n",packet[0],packet[1],packet[2],packet[3]);
+	packet+=4;
+	printf("s.port %d d.port %d\n",packet[0]*256+packet[1],packet[2]*256+packet[3]);
+	printf("data\n");
+	for(int i=35;i<300;i++)
+		printf("%c",packet[i]);
+	printf("\n");
 	/* And close the session */
 	}
 	pcap_close(handle);
