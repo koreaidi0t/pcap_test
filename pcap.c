@@ -11,9 +11,8 @@ int main(int argc, char *argv[])
 	char filter_exp[] = "port 80";	/* The filter expression */
 	bpf_u_int32 mask;		/* Our netmask */
 	bpf_u_int32 net;		/* Our IP */
-	struct pcap_pkthdr header;	/* The header that pcap gives us */
+	struct pcap_pkthdr *header;	/* The header that pcap gives us */
 	const u_char *packet;		/* The actual packet */
-	const unsigned char *pkt_data;
 								/* Define the device */
 	dev = pcap_lookupdev(errbuf);
 	if (dev == NULL) {
@@ -42,13 +41,20 @@ int main(int argc, char *argv[])
 		return(2);
 	}
 	/* Grab a packet */
+	int res=1;
+	//packet = pcap_next(handle, &header);
 	while(1)
 	{
-
-	//packet = pcap_next(handle, &header);
-	packet = pcap_next_ex(handle, &header,&pkt_data);
+	int offset=0;
+	res = pcap_next_ex(handle, &header, &packet);
+	if(res==0) continue;
 	/* Print its length */
-	printf("Jacked a packet with length of [%d]\n", header.len);
+	printf("Jacked a packet with length of [%d]\n", header->len);
+	printf("s.mac %02x:%02x:%02x:%02x:%02x:%02x\n",packet[0],packet[1],packet[2],packet[3],packet[4],packet[5]);
+	packet+=6;
+	printf("d.mac %02x:%02x:%02x:%02x:%02x:%02x\n",packet[0],packet[1],packet[2],packet[3],packet[4],packet[5]);
+	while(!((int)(packet[0])==69&&(int)(packet[1])==0)) packet++;
+	printf("s.ip %d.%d.%d.%d\n",packet[0],packet[1],packet[2],packet[3]);
 	/* And close the session */
 	}
 	pcap_close(handle);
