@@ -48,21 +48,21 @@ int main(int argc, char *argv[])
 	res = pcap_next_ex(handle, &header, &packet);
 	if(res==0) continue;
 	/* Print its length */
-	printf("Jacked a packet with length of [%d]\n", header->len);
-	printf("eth.smac %02x:%02x:%02x:%02x:%02x:%02x    ",packet[0],packet[1],packet[2],packet[3],packet[4],packet[5]);
+	//printf("Jacked a packet with length of [%d]\n", header->len);
+	printf("eth.smac %02x:%02x:%02x:%02x:%02x:%02x   ",packet[0],packet[1],packet[2],packet[3],packet[4],packet[5]);
 	packet+=6;
 	printf("eth.dmac %02x:%02x:%02x:%02x:%02x:%02x\n",packet[0],packet[1],packet[2],packet[3],packet[4],packet[5]);
 	while(!(packet[0]==8&&packet[1]==0)) packet++;
 	packet+=14;
-	printf("ip.sip %d.%d.%d.%d    ",packet[0],packet[1],packet[2],packet[3]);
+	printf("ip.sip %d.%d.%d.%d   ",packet[0],packet[1],packet[2],packet[3]);
 	packet+=4;
 	printf("ip.dip %d.%d.%d.%d\n",packet[0],packet[1],packet[2],packet[3]);
 	packet+=4;
-	printf("tcp.sport %d    tcp.dport %d\n",packet[0]*256+packet[1],packet[2]*256+packet[3]);
-	printf("\ndata\n");
+	printf("tcp.sport %d   tcp.dport %d\n",packet[0]*256+packet[1],packet[2]*256+packet[3]);
+	printf("data\n");
 	for(int i=35;i<150;i++)
 		printf("%c",packet[i]);
-	printf("\n");
+	printf("\n\n\n");
 	/* And close the session */
 	}
 	pcap_close(handle);
