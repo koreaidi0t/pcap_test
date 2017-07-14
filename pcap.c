@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 	char *dev;			/* The device to sniff on */
 	char errbuf[PCAP_ERRBUF_SIZE];	/* Error string */
 	struct bpf_program fp;		/* The compiled filter */
-	char filter_exp[] = "port 80";	/* The filter expression */
+	char filter_exp[] = "port *";	/* The filter expression */
 	bpf_u_int32 mask;		/* Our netmask */
 	bpf_u_int32 net;		/* Our IP */
 	struct pcap_pkthdr *header;	/* The header that pcap gives us */
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 	packet+=4;
 	printf("s.port %d d.port %d\n",packet[0]*256+packet[1],packet[2]*256+packet[3]);
 	printf("data\n");
-	for(int i=35;i<300;i++)
+	for(int i=35;i<150;i++)
 		printf("%c",packet[i]);
 	printf("\n");
 	/* And close the session */
