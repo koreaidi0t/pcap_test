@@ -49,17 +49,17 @@ int main(int argc, char *argv[])
 	if(res==0) continue;
 	/* Print its length */
 	printf("Jacked a packet with length of [%d]\n", header->len);
-	printf("s.mac %02x:%02x:%02x:%02x:%02x:%02x\n",packet[0],packet[1],packet[2],packet[3],packet[4],packet[5]);
+	printf("eth.smac %02x:%02x:%02x:%02x:%02x:%02x    ",packet[0],packet[1],packet[2],packet[3],packet[4],packet[5]);
 	packet+=6;
-	printf("d.mac %02x:%02x:%02x:%02x:%02x:%02x\n",packet[0],packet[1],packet[2],packet[3],packet[4],packet[5]);
+	printf("eth.dmac %02x:%02x:%02x:%02x:%02x:%02x\n",packet[0],packet[1],packet[2],packet[3],packet[4],packet[5]);
 	while(!(packet[0]==8&&packet[1]==0)) packet++;
 	packet+=14;
-	printf("s.ip %d.%d.%d.%d\n",packet[0],packet[1],packet[2],packet[3]);
+	printf("ip.sip %d.%d.%d.%d    ",packet[0],packet[1],packet[2],packet[3]);
 	packet+=4;
-	printf("d.ip %d.%d.%d.%d\n",packet[0],packet[1],packet[2],packet[3]);
+	printf("ip.dip %d.%d.%d.%d\n",packet[0],packet[1],packet[2],packet[3]);
 	packet+=4;
-	printf("s.port %d d.port %d\n",packet[0]*256+packet[1],packet[2]*256+packet[3]);
-	printf("data\n");
+	printf("tcp.sport %d    tcp.dport %d\n",packet[0]*256+packet[1],packet[2]*256+packet[3]);
+	printf("\ndata\n");
 	for(int i=35;i<150;i++)
 		printf("%c",packet[i]);
 	printf("\n");
