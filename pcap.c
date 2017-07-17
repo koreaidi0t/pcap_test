@@ -1,6 +1,5 @@
 #include <pcap.h>
 #include <stdio.h>
-#include <string.h>
 
 int main(int argc, char *argv[])
 {
@@ -52,8 +51,12 @@ int main(int argc, char *argv[])
 	printf("eth.smac %02x:%02x:%02x:%02x:%02x:%02x   ",packet[0],packet[1],packet[2],packet[3],packet[4],packet[5]);
 	packet+=6;
 	printf("eth.dmac %02x:%02x:%02x:%02x:%02x:%02x\n",packet[0],packet[1],packet[2],packet[3],packet[4],packet[5]);
+	int ofst=6; // check ip packet
+	if(!(packet[ofst]==8&&packet[ofst+1]==0)) {printf("It doesn't seem ip packet\n\n"); continue;}
 	while(!(packet[0]==8&&packet[1]==0)) packet++;
-	packet+=14;
+	packet+=11;//check tcp packet
+	if(!(packet[0]==6)) {printf("It doesn't seem tcp packet\n\n"); continue;}
+	packet+=3;
 	printf("ip.sip %d.%d.%d.%d   ",packet[0],packet[1],packet[2],packet[3]);
 	packet+=4;
 	printf("ip.dip %d.%d.%d.%d\n",packet[0],packet[1],packet[2],packet[3]);
