@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 	struct libnet_ethernet_hdr* ethr;	/* The header that pcap gives us */
 	const u_char *packet;		/* The actual packet */
 	struct libnet_ipv4_hdr* ip;
-	uint8_t ip_addr[15];
+	uint8_t ip_addr[16];
 	struct libnet_tcp_hdr* tcp;
 	/* Define the device */
 
@@ -71,10 +71,10 @@ int main(int argc, char *argv[])
 	
 	ethr=(struct libnet_ethernet_hdr*)(packet);
 	
-	printf("eth.smac %02x:%02x:%02x:%02x:%02x:%02x   \n",ethr->ether_shost[0],ethr->ether_shost[1],ethr->ether_shost[2],ethr->ether_shost[3],ethr->ether_shost[4],ethr->ether_shost[5]);
 	
 	printf("eth.dmac %02x:%02x:%02x:%02x:%02x:%02x   \n",ethr->ether_dhost[0],ethr->ether_dhost[1],ethr->ether_dhost[2],ethr->ether_dhost[3],ethr->ether_dhost[4],ethr->ether_dhost[5]);
 	
+	printf("eth.smac %02x:%02x:%02x:%02x:%02x:%02x   \n",ethr->ether_shost[0],ethr->ether_shost[1],ethr->ether_shost[2],ethr->ether_shost[3],ethr->ether_shost[4],ethr->ether_shost[5]);
 	ethr->ether_type=ntohs(*(uint16_t*)(packet+12));
 
 //	printf("ether_type : %x \n",ethr->ether_type);
