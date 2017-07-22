@@ -26,18 +26,6 @@ int main(int argc, char *argv[])
 
 	if(argc<2) {printf("Select the device!!\n");exit(0);}
 
-	dev = pcap_lookupdev(errbuf);
-	if (dev == NULL) {
-		fprintf(stderr, "Couldn't find default device: %s\n", errbuf);
-		return(2);
-	}
-	/* Find the properties for the device */
-	if (pcap_lookupnet(dev, &net, &mask, errbuf) == -1) {
-		fprintf(stderr, "Couldn't get netmask for device %s: %s\n", dev, errbuf);
-		net = 0;
-		mask = 0;
-	}
-	/* Open the session in promiscuous mode */
 	handle = pcap_open_live(argv[1], BUFSIZ, 1, 1000, errbuf);
 	if (handle == NULL) {
 		fprintf(stderr, "Couldn't open device %s: %s\n", dev, errbuf);
@@ -74,16 +62,20 @@ int main(int argc, char *argv[])
 	
 	printf("eth.dmac %02x:%02x:%02x:%02x:%02x:%02x   \n",ethr->ether_dhost[0],ethr->ether_dhost[1],ethr->ether_dhost[2],ethr->ether_dhost[3],ethr->ether_dhost[4],ethr->ether_dhost[5]);
 	
+
+
 	printf("eth.smac %02x:%02x:%02x:%02x:%02x:%02x   \n",ethr->ether_shost[0],ethr->ether_shost[1],ethr->ether_shost[2],ethr->ether_shost[3],ethr->ether_shost[4],ethr->ether_shost[5]);
-	ethr->ether_type=ntohs(*(uint16_t*)(packet+12));
+	
+
+	ethr->ether_type=ntohs(*(ethr->ether_shost+sizeof(ethr->ether_dhost)));
+
 
 //	printf("ether_type : %x \n",ethr->ether_type);
 
 	printf("===========================================================================\n");
-	
 	if(ethr->ether_type!=ETHERTYPE_IP){printf("It doesn't seem IP Packet\n");continue;}
 
-	ip=((struct libnet_ipv4_hdr*)&packet[14]);
+	ip=((struct libnet_ipv4_hdr*)&packet[sizeof(struct libnet_ethernet_hdr)]);
 			
 	inet_ntop(AF_INET,&(ip->ip_src.s_addr),ip_addr,INET_ADDRSTRLEN);
 
@@ -99,17 +91,24 @@ int main(int argc, char *argv[])
 	
 	printf("===========================================================================\n");
 	
-	tcp=(struct libnet_tcp_hdr*)&packet[14+(ip->ip_hl)*4];
 
 	if(!(ip->ip_p==IPPROTO_TCP)) {printf("It doesn't seem tcp packet\n\n"); continue;}
 	
+	
+	tcp=(struct libnet_tcp_hdr*)&packet[14+(ip->ip_hl)*4];
+	
+	
 	tcp->th_sport=ntohs(tcp->th_sport);
 
+	
 	tcp->th_dport=ntohs(tcp->th_dport);
+	
 	
 	printf("ip.sport : %d\n",tcp->th_sport);
 
+	
 	printf("ip.dport : %d\n",tcp->th_dport);
+	
 	
 	ip->ip_len=ntohs(ip->ip_len);
 	
@@ -117,22 +116,28 @@ int main(int argc, char *argv[])
 //	
 //	printf("ip_len : %d\n",ip->ip_len);
 	
-	int k=14+(ip->ip_hl+tcp->th_off)*4;
+	int k=sizeof(struct libnet_ethernet_hdr)+(ip->ip_hl+tcp->th_off)*4;
 
 	printf("DATA\n\n");	
-	
-	for(int i=0;i<ip->ip_len-(tcp->th_off+ip->ip_hl)*4;i++)
+
+	int size_data=ip->ip_len-(tcp->th_off+ip->ip_hl)*4;
+		
+	for(int i=0;i<size_data;i++)
 		printf("%c",packet[k++]);
+	
 	printf("\n");
 
+	
 	printf("===========================================================================\n");
 	
+	
 	printf("\n\n\n\n\n\n");
+	
 	}
 	
 	pcap_close(handle);
 	
 	return(0);
 	
-	}
+}
 
