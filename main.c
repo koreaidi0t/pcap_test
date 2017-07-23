@@ -48,10 +48,18 @@ int main(int argc, char *argv[])
 	
 	res = pcap_next_ex(handle, &header, &packet);
 	
+	if(res<1)
+	{
+
 	if(res==0){printf("Timeout Expired! Retrying to capture packet.....\n");continue;}
+	else if(res==-2) {printf("No more packets to read from the savefile.\nSelect the correct files!\n"); break; }	
 	
-	if(res==-1){printf("Error Occured! Retrying to capture packet.....\n");continue;}
-	
+	else
+	{printf("Error Occured! Retrying to capture packet.....\n");continue;}
+	}
+
+	else
+
 	/* Print its length */
 	//printf("Jacked a packet with length of [%d]\n", header->len);
 	
