@@ -51,11 +51,16 @@ int main(int argc, char *argv[])
 	if(res<1)
 	{
 
-	if(res==0){printf("Timeout Expired! Retrying to capture packet.....\n");continue;}
-	else if(res==-2) {printf("No more packets to read from the savefile.\nSelect the correct files!\n"); break; }	
-	
-	else
-	{printf("Error Occured! Retrying to capture packet.....\n");continue;}
+		if(res==-2)
+	       	{
+
+			printf("No more packets to read from the savefile.\nSelect the correct files!\n"); break; 
+			
+		}	
+
+		else if(res==0){printf("Timeout Expired! Retrying to capture packet.....\n");continue;}
+
+		else {printf("Error Occured! Retrying to capture packet.....\n");continue;}
 	}
 
 	else
