@@ -26,7 +26,9 @@ int main(int argc, char *argv[])
 
 	if(argc<2) {printf("Select the device!!\n");exit(0);}
 
+	else if(argc>2){printf("Select one device!!\n");exit(0);}
 	handle = pcap_open_live(argv[1], BUFSIZ, 1, 1000, errbuf);
+	
 	if (handle == NULL) {
 		fprintf(stderr, "Couldn't open device %s: %s\n", dev, errbuf);
 		return(2);
