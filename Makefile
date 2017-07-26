@@ -1,11 +1,11 @@
-all: pcap_test
+all: send_arp
 
-pcap_test: main.o
-	gcc -o pcap_test main.o -lpcap
+send_arp: main.o
+	gcc -o send_arp main.o -lpcap
 
 main.o: main.c
 	gcc -c -o main.o main.c -lpcap
 
 clean:
-	rm *.o pcap_test
+	rm *.o send_arp
 
